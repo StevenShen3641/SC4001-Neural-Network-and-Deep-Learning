@@ -73,3 +73,61 @@ class EarlyStopper:
             if self.counter >= self.patience:
                 return True
         return False
+
+
+class MLP(nn.Module):
+
+    def __init__(self, no_features, no_hidden, no_labels):
+        super().__init__()
+        self.mlp_stack = nn.Sequential(
+            # YOUR CODE HERE
+            # model layers
+            # here we add 0.2 dropout rate to avoid overfitting problem
+
+            # first layer with ReLU activation function
+            nn.Linear(no_features, no_hidden),
+            nn.ReLU(),
+            nn.Dropout(0.2),  # dropout of probability 0.2
+
+            # second layer with ReLU activation function
+            nn.Linear(no_hidden, no_hidden),
+            nn.ReLU(),
+            nn.Dropout(0.2),  # dropout of probability 0.2
+
+            # third layer with ReLU activation function
+            nn.Linear(no_hidden, no_hidden),
+            nn.ReLU(),
+            nn.Dropout(0.2),  # dropout of probability 0.2
+
+            # output layer with Sigmoid activation function
+            nn.Linear(no_hidden, no_labels),
+            nn.Sigmoid()
+
+        )
+
+    # YOUR CODE HERE
+    # define the forward pass
+    def forward(self, x):
+        # pass through the self.mlp_stack
+        logits = self.mlp_stack(x)
+        return logits
+
+
+class CustomDataset(Dataset):
+    # YOUR CODE HERE
+    def __init__(self, X, y):
+    # convert data to tensors
+    # note that long type is needed for y to prevent exception
+        self.X =torch.tensor(X, dtype=torch.float)
+        self.y =torch.tensor(y, dtype=torch.long)
+
+    # return size of data
+    def __len__(self):
+        return len(self.y)
+
+    # return data with given index
+    def __getitem__(self,idx):
+        return self.X[idx], self.y[idx]
+    
+
+loss_fn = nn.BCELoss()
