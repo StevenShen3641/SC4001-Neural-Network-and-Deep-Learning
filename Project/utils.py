@@ -1,14 +1,12 @@
-import pandas as pd
 import os
 import logging
-import numpy as np
-from gensim.models import Word2Vec
-import torch
-from torch.utils.data import Dataset, DataLoader
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 crowdflower_path = "./data/text_emotion.csv"
 wassa2017_path = "./data/wassa2017/training/anger-ratings-0to1.train.txt"
+train_data_path = "./data/train_data/train.csv"
+test_data_path = "./data/test_data/test.csv"
 
 
 def load_data(sample=True):
@@ -72,8 +70,12 @@ def split(df, test_size=0.2):
 
     train_data = pd.concat(train_data.values(), ignore_index=True)
     test_data = pd.concat(test_data.values(), ignore_index=True)
-    train_data.to_csv("train.csv", index=False)
-    test_data.to_csv("test.csv", index=False)
+    if not os.path.exists(train_data_path):
+        os.makedirs(os.path.dirname(train_data_path), exist_ok=True)
+    if not os.path.exists(test_data_path):
+        os.makedirs(os.path.dirname(test_data_path), exist_ok=True)
+    train_data.to_csv(train_data_path, index=False)
+    test_data.to_csv(test_data_path, index=False)
 
     X_train = train_data['content'].tolist()
     y_train = train_data['sentiment'].tolist()
