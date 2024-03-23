@@ -7,17 +7,16 @@ import pandas as pd
 import gensim.downloader as api
 from utils import train_data_path, test_data_path, load_data, split
 
-
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-unknown_words = {}
+# unknown_words = {}
 wv_path = ['./data/train_data/train_wv.pkl', './data/test_data/test_wv.pkl']
 
 
-def vectorize(sentences, type='glove-twitter-25'):
+def vectorize(sentences, model_type='glove-twitter-25', wv_type='zero_padding'):
     tokens = [nltk.word_tokenize(s.lower()) for s in sentences]
     try:
-        model = api.load(type)
-        dimension = int(type.split('-')[-1])
+        model = api.load(model_type)
+        dimension = int(model_type.split('-')[-1])
     except Exception as e:
         logging.warning(f"An error occurred: {e}")
         exit(1)
@@ -26,14 +25,11 @@ def vectorize(sentences, type='glove-twitter-25'):
     for t in tokens:
         wv = []
         for w in t:
-            try:
-                wv.append(model[w])
-            except KeyError:
+            if wv_type == 'zero_padding':
                 try:
-                    wv.append(unknown_words[w])
+                    wv.append(model[w])
                 except KeyError:
-                    unknown_words[w] = np.random.uniform(-0.25, 0.25, dimension)
-                    wv.append(unknown_words[w])
+                    wv.append(np.zeros(dimension))
         wvs.append(wv)
 
     return wvs
