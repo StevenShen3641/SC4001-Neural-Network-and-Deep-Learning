@@ -9,7 +9,7 @@ from utils import train_data_path, test_data_path, load_data, split
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 # unknown_words = {}
-wv_path = ['./data/train_data/train_wv.pkl', './data/test_data/test_wv.pkl']
+wv_path = ['./data/train_data/train_wv', './data/test_data/test_wv']
 
 
 def vectorize(sentences, model_type='glove-twitter-25', wv_type='zero_padding'):
@@ -36,6 +36,7 @@ def vectorize(sentences, model_type='glove-twitter-25', wv_type='zero_padding'):
 
 
 def main():
+    model_type = 'glove-twitter-25'
     if os.path.exists(train_data_path) and os.path.exists(test_data_path):
         train_df = pd.read_csv(train_data_path)
         X_train, y_train = train_df['content'].tolist(), train_df['sentiment'].tolist()
@@ -49,9 +50,9 @@ def main():
         if not os.path.exists(p):
             train_wv = vectorize(X_train)
             test_wv = vectorize(X_test)
-            with open(wv_path[0], 'wb') as f:
+            with open(wv_path[0] + f'_{model_type}.pkl', 'wb') as f:
                 pickle.dump(train_wv, f)
-            with open(wv_path[1], 'wb') as f:
+            with open(wv_path[1] + f'_{model_type}.pkl', 'wb') as f:
                 pickle.dump(test_wv, f)
             break
     else:
