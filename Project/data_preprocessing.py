@@ -9,7 +9,7 @@ from utils import train_data_path, test_data_path, load_data, split
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 # unknown_words = {}
-wv_path = ['./data/train_data/train_wv', './data/test_data/test_wv']
+wv_path = ['./data/train_data/train', './data/test_data/test']
 
 
 def vectorize(sentences, model_type='glove-twitter-25', wv_type='zero_padding'):
@@ -39,9 +39,11 @@ def main():
     model_type = 'glove-twitter-25'
     if os.path.exists(train_data_path) and os.path.exists(test_data_path):
         train_df = pd.read_csv(train_data_path)
-        X_train, y_train = train_df['content'].tolist(), train_df['sentiment'].tolist()
+        X_train, y_train = train_df['content'].tolist(
+        ), train_df['sentiment'].tolist()
         test_df = pd.read_csv(test_data_path)
-        X_test, y_test = test_df['content'].tolist(), test_df['sentiment'].tolist()
+        X_test, y_test = test_df['content'].tolist(
+        ), test_df['sentiment'].tolist()
     else:
         df = load_data()
         X_train, X_test, y_train, y_test = split(df)
@@ -51,9 +53,9 @@ def main():
             train_wv = vectorize(X_train)
             test_wv = vectorize(X_test)
             with open(wv_path[0] + f'_{model_type}.pkl', 'wb') as f:
-                pickle.dump(train_wv, f)
+                pickle.dump([train_wv, y_train], f)
             with open(wv_path[1] + f'_{model_type}.pkl', 'wb') as f:
-                pickle.dump(test_wv, f)
+                pickle.dump([test_wv, y_test], f)
             break
     else:
         logging.info('Vector pickle files already exists!')
