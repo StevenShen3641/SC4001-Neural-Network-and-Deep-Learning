@@ -7,6 +7,7 @@ import pandas as pd
 import gensim.downloader as api
 from utils import train_data_path, test_data_path, load_data, split
 
+
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 # unknown_words = {}
 wv_path = ['./data/train_data/train', './data/test_data/test']
@@ -36,7 +37,7 @@ def vectorize(sentences, model_type='glove-twitter-25', wv_type='zero_padding'):
 
 
 def main():
-    model_type = 'glove-twitter-25'
+    model_type = 'glove-twitter-200'
     if os.path.exists(train_data_path) and os.path.exists(test_data_path):
         train_df = pd.read_csv(train_data_path)
         X_train, y_train = train_df['content'].tolist(
@@ -50,8 +51,8 @@ def main():
 
     for p in wv_path:
         if not os.path.exists(p):
-            train_wv = vectorize(X_train)
-            test_wv = vectorize(X_test)
+            train_wv = vectorize(X_train, model_type=model_type)
+            test_wv = vectorize(X_test, model_type=model_type)
             with open(wv_path[0] + f'_{model_type}.pkl', 'wb') as f:
                 pickle.dump([train_wv, y_train], f)
             with open(wv_path[1] + f'_{model_type}.pkl', 'wb') as f:

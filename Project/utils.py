@@ -1,4 +1,5 @@
 import os
+import random
 import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -64,7 +65,7 @@ def split(df, test_size=0.2):
     for s in df['sentiment'].unique():
         data = df[df['sentiment'] == s]
 
-        train_df, test_df = train_test_split(df, test_size=test_size, random_state=42)
+        train_df, test_df = train_test_split(data, test_size=test_size, random_state=42)
         train_data[s] = train_df
         test_data[s] = test_df
 
