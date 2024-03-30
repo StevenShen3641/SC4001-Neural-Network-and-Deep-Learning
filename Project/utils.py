@@ -6,58 +6,9 @@ from sklearn.model_selection import train_test_split
 
 crowdflower_path = "./data/text_emotion.csv"
 wassa2017_path = "./data/wassa2017/training/anger-ratings-0to1.train.txt"
+wassa2017_dir = "./data/wassa2017/"
 train_data_path = "./data/train_data/train.csv"
 test_data_path = "./data/test_data/test.csv"
-
-
-def load_data(sample=True):
-    if not os.path.exists(crowdflower_path):
-        cf_df = pd.read_csv('https://query.data.world/s/x5wh4megwt4fd3jyotb75cz6qat33e?dws=00000')
-        os.makedirs(os.path.dirname(crowdflower_path), exist_ok=True)
-        cf_df.to_csv(crowdflower_path, index=False)
-    else:
-        cf_df = pd.read_csv(crowdflower_path)
-
-    cf_df.drop(columns=['tweet_id', 'author'], inplace=True)
-
-    # drop those with fewer instances
-    cf_df = cf_df[~cf_df['sentiment'].isin(['anger', 'boredom'])]
-
-    if sample:
-        sampled = []
-        for sentiment, group in cf_df.groupby('sentiment'):
-            if len(group) <= 1500:
-                sampled.append(group)
-            else:
-                sampled.append(group.sample(n=1500, random_state=42))
-
-        cf_df = pd.concat(sampled)
-
-    sentiment_counts = cf_df['sentiment'].value_counts()
-    print('-----------------------------')
-    print("# of data for each sentiment:")
-    print(sentiment_counts)
-    print('-----------------------------')
-
-    if not os.path.exists(wassa2017_path):
-        logging.warning('Wassa does not exist!!')
-        exit(1)
-
-    else:
-        with open(wassa2017_path, "r", encoding="utf-8") as file:
-            file.readline()
-            wassa_X = []
-            wassa_y = []
-            for line in file:
-                columns = line.strip().split("\t")
-                wassa_X.append(columns[1])
-                wassa_y.append('anger')
-
-    wassa_df = pd.DataFrame({'sentiment': wassa_y,
-                             'content': wassa_X})
-    df = pd.concat([cf_df, wassa_df])
-    return df
-
 
 def split(df, test_size=0.2):
     train_data = {}
@@ -65,7 +16,8 @@ def split(df, test_size=0.2):
     for s in df['sentiment'].unique():
         data = df[df['sentiment'] == s]
 
-        train_df, test_df = train_test_split(data, test_size=test_size, random_state=42)
+        train_df, test_df = train_test_split(
+            data, test_size=test_size, random_state=42)
         train_data[s] = train_df
         test_data[s] = test_df
 
@@ -84,3 +36,36 @@ def split(df, test_size=0.2):
     y_test = test_data['sentiment'].tolist()
 
     return X_train, X_test, y_train, y_test
+
+
+def load_wassa():
+    if not os.path.exists(wassa2017_dir):
+        logging.warning('Wassa does not exist!!')
+        exit(1)
+
+    else:
+        wassa_train_X = []
+        wassa_train_y = []
+        wassa_test_X = []
+        wassa_test_y = []
+        train_path = "training/"
+        test_path = "testing/"
+        for j in ["anger", "fear", "joy", "sadness"]:
+            with open(wassa2017_dir + train_path + j + "-ratings-0to1.train.txt", "r", encoding="utf-8") as file:
+                file.readline()
+                for line in file:
+                    columns = line.strip().split("\t")
+                    wassa_train_X.append(columns[1])
+                    wassa_train_y.append(j)
+            with open(wassa2017_dir + test_path + j + "-ratings-0to1.test.target.txt", "r", encoding="utf-8") as file:
+                file.readline()
+                for line in file:
+                    columns = line.strip().split("\t")
+                    wassa_test_X.append(columns[1])
+                    wassa_test_y.append(j)
+
+    wassa_train_df = pd.DataFrame({'sentiment': wassa_train_y,
+                                   'content': wassa_train_X})
+    wassa_test_df = pd.DataFrame({'sentiment': wassa_test_y,
+                                  'content': wassa_test_X})
+    return wassa_train_df, wassa_test_df

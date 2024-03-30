@@ -5,7 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 import gensim.downloader as api
-from utils import train_data_path, test_data_path, load_data, split
+from utils import train_data_path, test_data_path, load_wassa, split
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -37,7 +37,7 @@ def vectorize(sentences, model_type='glove-twitter-25', wv_type='zero_padding'):
 
 
 def main():
-    model_type = 'glove-twitter-200'
+    model_type = 'glove-twitter-200'  # 25 100 200 word2vec 300 
     if os.path.exists(train_data_path) and os.path.exists(test_data_path):
         train_df = pd.read_csv(train_data_path)
         X_train, y_train = train_df['content'].tolist(
@@ -46,8 +46,13 @@ def main():
         X_test, y_test = test_df['content'].tolist(
         ), test_df['sentiment'].tolist()
     else:
-        df = load_data()
-        X_train, X_test, y_train, y_test = split(df)
+        train_data, test_data = load_wassa()
+        train_data.to_csv(train_data_path, index=False)
+        test_data.to_csv(test_data_path, index=False)
+        X_train = train_data['content'].tolist()
+        y_train = train_data['sentiment'].tolist()
+        X_test = test_data['content'].tolist()
+        y_test = test_data['sentiment'].tolist()
 
     for p in wv_path:
         if not os.path.exists(p):
