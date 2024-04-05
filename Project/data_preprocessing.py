@@ -86,9 +86,8 @@ def vectorize_sst2(model_type='glove-wiki-gigaword-200'):
 
 
 def onehot_sst2():
-    sentences = ['ab cd']
     train_data, train_labels, test_data, test_labels, dev_data, dev_labels = load_sst()
-    max_length = max(len(i) for i in train_data + test_data + dev_data)
+    max_length = 1014
     for p in wv_path:
         if not os.path.exists(p + f'_onehot_sst2.pkl'):
             for path in wv_path:
