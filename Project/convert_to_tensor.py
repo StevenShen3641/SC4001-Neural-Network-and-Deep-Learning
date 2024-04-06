@@ -48,6 +48,15 @@ def main():
     with open(wv_path[2] + f'_{model_type}_label_sst2.pkl', 'wb') as f:
         pickle.dump(dev_labels, f)
 
+    with open(wv_path[1] + f'_{model_type}_IMDB.pkl', 'rb') as f:
+        data_wv, data_labels = pickle.load(f)
+    max_length = max(len(i) for i in data_wv)
+    data_tensor = convert_to_tensor(data_wv, max_length)
+    torch.save(data_tensor, wv_path[1] + f'_{model_type}_tensor_IMDB.pt')
+    logging.info("IMDB done!")
+    with open(wv_path[1] + f'_{model_type}_label_IMDB.pkl', 'wb') as f:
+        pickle.dump(data_labels, f)
+
 
 if __name__ == '__main__':
     main()

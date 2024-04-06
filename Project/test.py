@@ -1,7 +1,13 @@
-import pickle
-import numpy as np
-import torch
-import torch.nn.functional as F
+import tensorflow as tf
+import os
+print(os.environ["CUDA_VISIBLE_DEVICES"])
 
-print(F.one_hot(torch.tensor([0])))
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
+
+def a() -> int:
+    print()
+
+
+def b() -> int:
+    print()
