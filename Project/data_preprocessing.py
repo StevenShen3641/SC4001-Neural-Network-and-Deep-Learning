@@ -32,8 +32,8 @@ def load_sst():
     return train_data, train_labels, test_data, test_labels, dev_data, dev_labels
 
 
-def load_IMDB(num=1000):
-    df = pd.read_csv('./data/IMDB/IMDB Dataset.csv')[:num]
+def load_IMDB():
+    df = pd.read_csv('./data/IMDB/IMDB Dataset.csv')
     df['sentiment'] = df['sentiment'].replace({'positive': 1, 'negative': 0})
     return df
 

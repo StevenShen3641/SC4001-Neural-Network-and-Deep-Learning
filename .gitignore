@@ -164,3 +164,5 @@ cython_debug/
 *.pt
 .idea/
 .*/
+training_1/
+model/
