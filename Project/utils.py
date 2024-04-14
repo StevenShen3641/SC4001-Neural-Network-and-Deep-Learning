@@ -5,16 +5,25 @@ STOPWORDS = set(stopwords.words('english'))
 
 
 def remove_stopwords(text):
+    """
+    remove stop words
+    """
     return " ".join([word for word in str(text).split() if word not in STOPWORDS])
 
 
 def preprocess(X):
+    """
+    doing preprocess for the data
+    """
     return X.map(lambda x: x.lower().split("\n")).map(lambda x: [y.split(". ") for y in x]).map(
         lambda x: [i.replace('\'', '') for sl in x for i in sl if i != ''])
 
 
-# Preprocess both train and test separately. Remove punctuations and other unwanted characters
 def replace_punct(st, punct):
+    """
+    Preprocess both train and test separately. Remove punctuations and other unwanted characters
+
+    """
     for i in punct:
         if i == "..":
             st = st.replace("..", '.')
@@ -26,6 +35,9 @@ def replace_punct(st, punct):
 
 
 def remove_special_content(df):
+    """
+    use text_hammer to do preprocessing
+    """
     # These are series of preprocessing
     df['content'] = df['content'].progress_apply(lambda x: th.cont_exp(x))  # you're -> you are; i'm -> i am
     df['content'] = df['content'].progress_apply(lambda x: th.remove_emails(x))
