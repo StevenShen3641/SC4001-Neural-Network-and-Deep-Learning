@@ -27,6 +27,7 @@ We implement all our models using Jupyter Notebook. Each notebook contains a spe
 - All notebooks and Python scripts are located in the root directory.
 - Datasets are stored under `./data` directory.
 - Images (such as t-SNE visualization) are stored under `./image` directory.
+- Our report is under `./report` directory.
 
 ### Prerequisites
 
@@ -53,9 +54,9 @@ Run `jupyter notebook` to start the notebook. Each model has its separated `.ipy
 Available notebooks along with models:
 
 ```powershell
-CNN_onehot.ipynb  # character-wise embedding CNN
-CNN_vector.ipynb  # word vector embedding CNN 
-# CNN_vector_val.ipynb is for hyperparameter tuning demonstration
+CNN-Char.ipynb  # character-wise embedding CNN
+CNN-WV.ipynb  # word vector embedding CNN 
+# CNN-WV-validation.ipynb is for hyperparameter tuning demonstration
 HAN.ipynb  # Hierarchical Attention Network model
 LSTM.ipynb  # bidirectional LSTM
 LSTM-Attention.ipynb  # bidirectional LSTM with attention layers
