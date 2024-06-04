@@ -166,3 +166,4 @@ cython_debug/
 .*/
 training_1/
 model/
+lightning_logs/
